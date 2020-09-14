@@ -1,17 +1,9 @@
 
 
-class A:
-    def __init__(self):
-        pass
 
-    def f(self):
+x = [1, 2, 3, 1]
 
-        return B()
+while 1 in x:
+    x.remove(1)
 
-class B:
-    def __init__(self):
-        self.a = A()
-
-
-a = A()
-print(a.f())
+print(x)
