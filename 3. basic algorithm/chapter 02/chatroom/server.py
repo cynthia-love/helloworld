@@ -2,13 +2,9 @@
 # Author: Cynthia
 
 """
-    builtinf演示UI组件内部实现控制逻辑
-"""
-
-"""
     服务端不需要界面
     主程序接受来自客户端的连接, 最大10
-    支线程接受来自客户端的信息, 信息格式ID:message
+    支线程接受来自客户端的信息, 信息格式目标ID:message
     首次连接成功后要单独把ID发过来    
 """
 import socket

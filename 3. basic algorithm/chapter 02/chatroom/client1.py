@@ -9,7 +9,7 @@ import socket
 import threading
 
 from tkinter import *
-from tkinter.ttk import *
+from tkinter.ttk import *  # ttk是tkinter的升级版, 但不是所有组件都实现了一遍
 
 from tkinter.messagebox import *
 from tkinter.scrolledtext import ScrolledText
