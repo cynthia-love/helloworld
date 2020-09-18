@@ -5,16 +5,11 @@
     实现一个电子阅读器
     数据库采用本地文件模拟
 """
-import os
 import sys
 import settings
 from util import common
 from util.book import Book
 from util.reader import Reader
-from util.dao import reader_handler as rh
-from util.dao import book_handler as bh
-from util.dao import shelf_handler as sh
-from util.dao import history_handler as hh
 
 reader = Reader()
 
@@ -36,7 +31,7 @@ def login():
         state = reader.login()
         if state: return state
 
-# 注意这里的双层decorator, 先下面的再上面的
+# 注意这里的双层decorator, 先下面的再上面的; 注意auth怎么写的, 有时候要记recharge
 # 另外, 注意装饰器在@的时候就会执行第一层里的代码(所以才会包一个wrapper)
 # 所以一些判断条件什么的不能写在外层
 @common.log
@@ -78,7 +73,7 @@ def buy():
         if state:
             print("购买成功!")
         else:
-            print("余额不足, 请充值!")
+            print("购买失败!")
 
 @common.log
 @common.auth

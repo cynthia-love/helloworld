@@ -10,7 +10,7 @@ import settings
 
 def log(func):
     """
-
+    日志装饰器
     :param func:
     :return:
     """
@@ -31,7 +31,7 @@ def log(func):
 
 def auth(func):
     """
-
+    被动登陆装饰器
     :param func:
     :return:
     """
@@ -40,6 +40,7 @@ def auth(func):
         reader = Reader()
         if reader.is_login():
             wrapper.__name__ = func.__name__
+            # 这里注意为什么要改名字, 因为如果还是执行原函数, 记日志的时候要记原来的操作名
             res = func(*args, **kwargs)
             return res
         else:
