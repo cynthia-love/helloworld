@@ -1,0 +1,10 @@
+2020-09-18 14:04:37|None|register|<staticmethod object at 0x10b9d1c10>
+2020-09-18 14:15:45|None|register|True
+2020-09-18 14:15:59|bbliu|login|True
+2020-09-18 14:16:29|bbliu|recharge|True
+2020-09-18 14:18:23|bbliu|login_passively|True
+2020-09-18 14:18:31|bbliu|buy|None
+2020-09-18 14:18:39|bbliu|read|None
+2020-09-18 14:30:28|bbliu|login_passively|True
+2020-09-18 14:30:53|bbliu|read|None
+2020-09-18 14:31:00|bbliu|read|None

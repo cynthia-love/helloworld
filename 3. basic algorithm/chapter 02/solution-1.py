@@ -769,7 +769,7 @@ adapter.f()
 # 2.2.2 软件工程设计模式-结构型模式-装饰器, Decorator
 # 有点像mixin, 给类添加功能组件, 区别于descriptor/property
 # 不过和mixin也是有点区别的, 装饰器是直接写, 而mixin是先把装饰的部分独立成组件类, 然后再混入
-
+# 这里演示的装饰器比较简单, 更复杂完整的见homework/solution-25.py
 class A:
     def __init__(self):
         self.x = 100
