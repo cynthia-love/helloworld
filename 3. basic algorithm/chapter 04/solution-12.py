@@ -3,6 +3,8 @@
 
 """
     消除尾递归
+    (这里的消除并不是说尾递归不好, 而是编译器会对尾递归自动优化, 减少额外的递归函数活动记录开销)
+    (尾递归是线性递归的一种, 所以也一定可以转化成非递归形式)
 """
 
 """
@@ -125,7 +127,44 @@ def f4(a, b, n):
 print(f4(1, 2, 5))
 
 """二分查找"""
+# 递归
+def f5(s, target, left, right):
+    if left > right:
+        return False
 
+    mid = (left+right)//2
+    if s[mid] == target:
+        return True
+    elif s[mid] > target:
+        return f5(s, target, left, mid-1)
+    else:
+        return f5(s, target, mid+1, right)
+
+# 非递归
+def f6(s, target):
+    left, right = 0, len(s)-1
+    while left <= right:
+        mid = (left+right)//2
+        if s[mid] == target:
+            return True
+        elif s[mid] > target:
+            right = mid-1
+        else:
+            left = mid+1
+    return False
 
 """序列逆置"""
+# 递归形式
+def f7(s, left, right):
+    if left >= right: return
+    s[left], s[right] = s[right], s[left]
+    f7(s, left+1, right-1)
+
+# 非递归形式
+def f8(s):
+    left, right = 0, len(s)-1
+    while left < right:
+        s[left], s[right] = s[right], s[left]
+        left += 1
+        right -= 1
 
