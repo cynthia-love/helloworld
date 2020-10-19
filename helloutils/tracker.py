@@ -30,8 +30,8 @@ class Track:
         self._mark += 1
         res = self._func(*args, **kwargs)
         self._mark -= 1
-        print("{}↑{}({})".format("\t"*self._mark, self._func.__name__,
-                                ",".join([str(e) for e in list(args)+list(kwargs.values())])))
+        print("{}↑{}({})={}".format("\t"*self._mark, self._func.__name__,
+                                ",".join([str(e) for e in list(args)+list(kwargs.values())]), res))
         return res
 
     # 下面这个方法是为了保证加了装饰器的函数取__name__等属性时还能取到原函数的属性, 而不是Track实例的
