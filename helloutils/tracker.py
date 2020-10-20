@@ -15,7 +15,8 @@ class Track:
         :param func: 待装饰的函数
         """
         self._func = func
-        self._mark = 0
+        self._mark = 1  # 标记深度
+        self._count = 1  # 标记次数
 
     def __call__(self, *args, **kwargs):
         """
@@ -25,12 +26,13 @@ class Track:
         :param kwargs:
         :return:
         """
-        print("{}↓{}({})".format("\t"*self._mark, self._func.__name__,
+        print("{:<5}{:<5}{}↓{}({})".format(self._count, self._mark, "\t"*self._mark, self._func.__name__,
                                 ",".join([str(e) for e in list(args)+list(kwargs.values())])))
         self._mark += 1
+        self._count += 1
         res = self._func(*args, **kwargs)
         self._mark -= 1
-        print("{}↑{}({})={}".format("\t"*self._mark, self._func.__name__,
+        print("{:<5}{:<5}{}↑{}({})={}".format(self._count, self._mark, "\t"*self._mark, self._func.__name__,
                                 ",".join([str(e) for e in list(args)+list(kwargs.values())]), res))
         return res
 
@@ -46,6 +48,9 @@ class Track:
 
         # 多加一个参数用于表示层级
         if item == '_mark':
+            return super().__getattribute__(item)
+
+        if item == '_count':
             return super().__getattribute__(item)
 
         try:
