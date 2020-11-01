@@ -6,6 +6,7 @@
 """
 import re
 import sys
+import copy
 import requests
 import numpy as np
 from hellofund.module.const import *
@@ -69,13 +70,20 @@ def get_fun_detail(code: str):
         # 内部持有比例
         inner_ratio = re.search(r'"内部持有比例".*?\[(.*?)]}', res).group(1)
         inner_ratio = np.mean([float(e)/100 for e in inner_ratio.split(',')])
-        print(inner_ratio)
 
         # 基金经理名称
         manager_name = re.search(r'Data_currentFundManager\s?=\s?.*?"name":"(.*?)"', res).group(1)
+        print(manager_name)
         # 基金经理工作时长, 文字描述
         manager_worktime = re.search(r'Data_currentFundManager\s?=\s?.*?"workTime":"(.*?)"', res).group(1)
-        print(manager_worktime)
+        # 看了下, 就两种情况: xx天和xx年又xx天, 不如都转成年的形式
+        if '年' in manager_worktime:
+            manager_worktime = re.search(r'([0-9]*)(年又)*([0-9]*)天', manager_worktime).groups()
+            manager_worktime = float(manager_worktime[0])+float(manager_worktime[2])/365
+        else:
+            manager_worktime = re.search(r'([0-9]*)天', manager_worktime).group(1)
+            manager_worktime = float(manager_worktime)/365
+        print("{:.2f}年".format(manager_worktime))
         # 基金经理评分
         manager_score = re.search(r'Data_currentFundManager\s?=\s?.*?"avr":"(.*?)"', res).group(1)
         # 基金经理跑赢沪深300能力
@@ -125,16 +133,26 @@ def get_fun_detail(code: str):
         # 同类排名走势
         rate_order = re.search(r'Data_rateInSimilarType\s?=\s?\[(.*?)]', res).group(1)
         rate_order = re.findall(r'{"x":(.*?),"y":(.*?),"sc":"(.*?)"', rate_order)
-        rate_order = [(stamp2struct(e[0]), float(e[1])/float(e[2])) for e in rate_order]
+        rate_order = [[stamp2struct(e[0]), float(e[1])/float(e[2])] for e in rate_order]
         # 参照累计净值, 这里过滤10年以上的
         rate_order = [e for e in rate_order if e[0] >= TEN_YEAR_BEFORE]
-        print(rate_order)
+
+        # 把排名和累计净值合并了吧, 以rate_order的时间范围为基础
+        # [(日期, 排名百分比, 累计净值, 日涨跌)]
+        fund_history = copy.deepcopy(rate_order)
+        for e1 in fund_history:
+            for e2 in ac_value:
+                if e2[0] == e1[0]:
+                    e1.append(e2[1])
+                    e1.append(e2[2])
+                    break
 
     except (ConnectionError, HTTPError, RequestException):
         print("fail to get fund detail!")
         sys.exit(1)
+    except AttributeError:
+        return -1
 
-get_fun_detail("000001")
-
-print(stamp2struct("1601395200000"))
-print(stamp2struct("1588176000000"))
+res = get_fun_detail("519772")
+if res == -1:
+    print("pass")
