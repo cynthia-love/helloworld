@@ -5,6 +5,9 @@
     基于数组的序列
     即基于array数据结构的list, tuple, str
     注意, python里的array是动态数组类, 其底层也是基于array数据结构
+
+    可以把list称为基于数组的动态引用数组
+    把array称为基于数组的动态紧凑数组
 """
 
 """
