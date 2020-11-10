@@ -31,6 +31,10 @@
     aabaad
        aabaac, 把下面拉到这个位置时, 上下才能嵌到一起, 参照系为上指针, 那么相当于下指针变成next[c]
     即从next[c]位置继续和上串匹配, 前面的就不比了
+    
+    公共前后缀为3-错位1个
+    公共前后缀为2-错位2个
+    公共前后缀为1-错位3个(这里如果错位2个, 肯定嵌不进去, 否则那公共前后缀就是2而不是1了)
 """
 
 # 生成
@@ -151,7 +155,40 @@ def f(s, p):
 
 print(f('BBC ABCDAB ABCDABCDABDE', 'ABCDABD'))
 print(f('ababcabcacbab', 'abcac'))
-"""
-ababcabcacbab
-abcac
-"""
+
+
+# 字符串构造, 以去掉字符串中的特殊字符为例
+
+# 方法1, 最一般的方法
+s = 'hello world'
+r = ''
+for e in s:
+    if e.isalpha():
+        r = r+e
+        # h, he, hel, hell...会生成很多中间字符串, 涉及新空间分配和一个个字符复制
+        # 1+2+..+n = O(n^2)
+print(r)
+
+# 方法2, 解释器的自动优化
+# 解释器会为每个对象维护一个引用计数器, 计数器为0, 可以垃圾回收
+# 计数器为1, 表示没有被其他地方引用, 那么解释器在处理r += e的时候就不会每次都扩展空间
+# 而是采用动态数组扩展的思路, 比如x2, 可以使得r += e 类似于append摊销时间复杂度为O(n)
+
+# 方法3, 拼接过程不用str这种不可变数据类型, 而是采用list, 最后再拼接
+s = "hello world"
+r = []
+for e in s:
+    if e.isalpha():
+        r.append(e)
+r = ''.join(r)
+print(r)
+
+# 方法4, 对方法3的进一步优化, 用列表推导式, 减少函数调用次数
+r = ''.join([e for e in s if e.isalpha()])
+print(r)
+
+# 方法5, 生成器, 比用列表推导式更优
+# 空间更优, 少了列表生成过程, 时间不一定吧
+# 生成器如何提前获取元素个数???获取不到岂不是会发生数组动态扩展???
+r = ''.join(e for e in s if e.isalpha())
+print(r)
