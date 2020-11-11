@@ -17,9 +17,11 @@ class Element:
     def get_score(self):
         return self._score
 
+    # >=
     def __ge__(self, other):
         return self._score >= other.get_score()
 
+    # <
     def __lt__(self, other):
         return self._score < other.get_score()
 
