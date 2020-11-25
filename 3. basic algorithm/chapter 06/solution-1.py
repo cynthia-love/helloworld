@@ -34,5 +34,119 @@
     栈的抽象数据类型, Abstract Data Type, 数据类型的抽象表示
     包括数据对象、数据对象之间的关系和数据对象的基本操作(注意操作也包含在内)
     
+    栈支持的操作:
     
+    push(e), 将一个元素压入栈顶
+    pop(), 栈顶的一个元素出栈并返回, 如果为空, 报错
+    top(), 栈顶的一个元素不出栈返回, 如果为空, 报错
+    empty(), 为空返回True, 否则返回False
+    len(栈), 返回栈中元素的数量
 """
+
+"""
+    利用适配器模式+动态引用数组类型list实现自定义栈
+    
+    这种把一个类的方法利用适配器类包装一下, 变成另一个方法的设计模式称为适配器模式
+    
+    比如狗的bark和猫的meow, 可以用一个适配器封装, 提供统一make_sound方法
+    
+    根据传入的类是狗还是猫, make_sound调用不同的方法
+    
+    本例中, 不存在这种动态适配, list直接写在Adaptor里就行
+"""
+
+# 特别地, 要自定义一个空错误类型, 代替list为空时的IndexError
+
+class EmptyError(Exception):
+    """Error attempting to access an element from an empty container"""
+    pass
+
+class Stack:
+    """FILO Stack implementation using a Python list as underlying storage
+    一共有__init__, push, pop, top, empty, __len__ 六个方法
+    """
+
+    def __init__(self):
+        """Create an empty stack"""
+        self._data = list()
+
+    def __len__(self):  # O(1)
+        """Return the number of elements in the stack"""
+        return len(self._data)
+
+    def empty(self):  # O(1)
+        """Return True if the stack is empty"""
+        # 这里len(self), len(self._data)都行
+        # 既然定义了__len__, 直接用len(self)吧
+        return len(self) == 0
+
+    def push(self, e):
+        """Add an element e to the top of the stack"""
+
+        self._data.append(e)  # O(1)
+
+    def pop(self):
+        """Remove and return the element from the top of the stack
+        Raise EmptyError if the stack is empty
+        """
+        if self.empty():
+            raise EmptyError('Stack is empty')
+
+        return self._data.pop()  # O(1)
+
+    def top(self):
+        """Return but not remove the element at the top of the stack
+        Raise EmptyError if the stack is empty"""
+        if self.empty():
+            raise EmptyError('Stack is empty')
+
+        return self._data[-1]  # O(1)
+
+    def __str__(self):
+        return ', '.join(str(e) for e in self._data)
+
+s = Stack()
+
+s.push(5)
+print(s)
+s.push(3)
+print(s)
+print(len(s))
+s.pop()
+print(s)
+print(s.empty())
+s.pop()
+print(s.empty())
+# s.pop()
+s.push(7)
+s.push(9)
+print(s.top())
+print(s)
+s.push(4)
+print(s)
+print(len(s))
+print(s.pop())
+print(s)
+s.push(6)
+s.push(8)
+print(s)
+s.pop()
+print(s)
+"""
+5
+5, 3
+2
+5
+False
+True
+9
+7, 9
+7, 9, 4
+3
+4
+7, 9
+7, 9, 6, 8
+7, 9, 6
+"""
+
+
