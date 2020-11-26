@@ -1,7 +1,6 @@
 
 
-import random
+x = [1, 2]
+y = [3, 4]
 
-from decimal import Decimal
-print(Decimal(1.1))
-print(Decimal('1.1')==Decimal(1.1))
+print(list(e for e in x or y))
