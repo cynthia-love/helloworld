@@ -44,32 +44,42 @@ class Queue:
     def empty(self):
         return len(self) == 0
 
+    # 满了就扩大两倍, 摊销时间复杂度O(1), 空间复杂度O(n)
     def enqueue(self, e):
-        if self._count == Queue.CAPACITY:
-            self.resize(Queue.CAPACITY*2)
+        # 数组大小调整的时候不建议再用CAPACITY, 直接去改类变量会影响其他的实例初始化
+        # 这里建议直接用len(self._data)去获取数组的空间大小
+        if self._count == len(self._data):
+            self.resize(len(self._data)*2)
 
-        self._data[(self._head+1+self._count) % Queue.CAPACITY] = e
+        self._data[(self._head+1+self._count) % len(self._data)] = e
 
         self._count += 1
 
+    # 删除要缩减, O(1), 空间复杂度O(n)
+    # 注意, 如果不缩减, 那么会导致空间大小和当前元素个数脱节, 空间复杂度就不是O(n)了
     def dequeue(self):
         if self.empty():
             raise EmptyError('Queue is empty')
 
-        self._head = (self._head+1) % Queue.CAPACITY
+        self._head = (self._head+1) % len(self._data)
+        # 这里一定要临时存储, 因为数组收缩后出队的值就没了
+        res = self._data[self._head]
+        # 把删除的数组元素置为None, 目的是去掉引用, 从而python可以对其进行垃圾回收
+        self._data[self._head] = None
+
         self._count -= 1
 
-        if self._count <= Queue.CAPACITY / 4:
+        if self._count <= len(self._data) / 4:
 
-            self.resize(Queue.CAPACITY // 2)
+            self.resize(len(self._data) // 2)
 
-        return self._data[self._head]
+        return res
 
     def first(self):
         if self.empty():
             raise EmptyError('Queue is empty')
 
-        return self._data[(self._head+1) % Queue.CAPACITY]
+        return self._data[(self._head+1) % len(self._data)]
 
     def resize(self, c):
 
@@ -78,9 +88,8 @@ class Queue:
 
         for i in range(self._count):
 
-            data2[(head2+1+i) % c] = self._data[(self._head+1+i) % self.CAPACITY]
+            data2[(head2+1+i) % c] = self._data[(self._head+1+i) % len(self._data)]
 
-        Queue.CAPACITY = c
         self._data = data2
         self._head = head2
 
@@ -99,8 +108,6 @@ for i in range(11):
     q.enqueue(i)
     print(q._count, q.CAPACITY)
 
-# CAPACITY是类变量, 这里别忘了重置
-Queue.CAPACITY = 5
 q = Queue()
 q.enqueue(1)
 q.enqueue(2)
