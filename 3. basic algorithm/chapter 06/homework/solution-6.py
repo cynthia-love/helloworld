@@ -6,16 +6,11 @@
 
     只考虑()[]{}, 不考虑<>, '', ""什么的
 
-    非递归思路, 左入栈, 右和栈顶碰
+    非递归思路1, 左入栈, 右和栈顶碰
+    非递归思路2, 计数
 
     递归思路:
-    一种取巧的办法是把栈作为参数传递, 递归仅起到循环的作用...
-
-    下面思考如何彻底递归-基本思路比较清晰, 回溯
-
-    (([]){})()
-
-    遇到左括号往下递归, 右括号往上回溯, 就是细节怎么实现想不透
+    一种取巧的办法是把栈或计数器作为参数传递, 递归仅起到循环的作用...
 
 """
 from collections import deque, defaultdict
@@ -40,7 +35,7 @@ def f1(s):
 
 print(f1('(([]){})()'))
 
-# 补充一种非递归思路, 数数
+# 补充一种非递归思路, 计数
 def f1(s):
     r2l = {')': '(', ']': '[', '}': '{'}
     d = defaultdict(int)
@@ -60,8 +55,16 @@ print(f1('(([]){})()'))
 
 
 """
-    先尝试一下一种取巧的递归, 传参, 实际上就是栈
+    先尝试一下第一种取巧的递归, 传栈
     递归只是起到循环作用
+    
+    f(stack, k) = 
+        如果k > len(s)-1, len(stack) == 0
+        如果s[k] 为左括号, f(stack.append(s[k]), k+1)
+        如果s[k] 为右括号:
+                如果len(stack) == 0, False
+                如果stack栈顶不配对, False
+                否则f(stack.pop(), k+1)
     
 """
 
@@ -85,24 +88,28 @@ def f2(stack, s):
 print(f2([], '(([]){})()'))
 
 """
-    下面尝试真正的递归
+    下面尝试第二种取巧的递归, 传计数器
     
-    
+    f(count, k) = 
+        如果 k > len(s)-1, sum(count.values()) == 0
+        如果 s[k] 为左括号, f(count[s[0]]+=1, k+1)
+        如果 s[k] 为右括号, count里对应左括号计数-1
+                -1后小于0, False
+                不小于0, f(count, k+1)
 """
-@Track
-def f3(s):
-    if len(s) == 0:
-        return True
 
-    if len(s) == 1:
-        return s if s in r2l else False
+def f2(count, s):
+    if not s:
+        return sum(count.values()) == 0
 
     if s[0] in r2l:
-        return s
+        count[r2l[s[0]]] -= 1
+        if count[r2l[s[0]]] < 0:
+            return False
     else:
-        r = f3(s[1:])
+        count[s[0]] += 1
 
-        pass
+    return f2(count, s[1:])
 
 
-f3('[]')
+print(f2(defaultdict(int), '(([]){})()'))
