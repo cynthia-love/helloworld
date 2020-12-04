@@ -12,6 +12,9 @@
     递归思路:
     一种取巧的办法是把栈或计数器作为参数传递, 递归仅起到循环的作用...
 
+    彻底的递归思路的话, 嗯, 把非递归栈方法里的提前return逻辑去掉, 都最后判断
+    你就能想出来递归思路了, 见下面的f(4)
+
 """
 from collections import deque, defaultdict
 from helloutils.tracker import Track
