@@ -15,6 +15,10 @@
     彻底的递归思路的话, 嗯, 把非递归栈方法里的提前return逻辑去掉, 都最后判断
     你就能想出来递归思路了, 见下面的f(4)
 
+    比如: (()())), 都入栈, 最后得到 )
+
+    (([)), 最后得到(([))
+
 """
 from collections import deque, defaultdict
 from helloutils.tracker import Track
