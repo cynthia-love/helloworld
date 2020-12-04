@@ -112,4 +112,5 @@ def f2(count, s):
     return f2(count, s[1:])
 
 
+
 print(f2(defaultdict(int), '(([]){})()'))
