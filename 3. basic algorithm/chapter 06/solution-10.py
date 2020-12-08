@@ -72,6 +72,7 @@ class Deque:
         self._data[(self._head + 1) % len(self._data)] = None
         self._head = (self._head+1) % len(self._data)
 
+        self._count -= 1
         # 出队处理完之后, 再去看是否要收缩
         if self._count <= len(self._data) / 4:
             self.resize(len(self._data) // 2)
