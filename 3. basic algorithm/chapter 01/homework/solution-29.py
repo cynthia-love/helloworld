@@ -3,6 +3,19 @@
 
 """
     输出'c', 'a', 't', 'd', 'o', 'g' 所有可能组成的字符串, 不可重复
+    注意, 经常遇到的问题有四种:
+    1. 全排列-最优字典法
+    2. 排列
+    3. 组合
+    4. 子集(即所有长度的组合)-最优二进制数法
+
+    注意对应的库函数
+    print(list(permutations(x)))  # 1全排列
+    print(list(permutations(x, 2)))  # 2部分排列
+    print(list(combinations(x, 2)))  # 3组合
+
+    子集可以通过遍历所有长度的combinations(x, 2)得到
+
 """
 
 """
