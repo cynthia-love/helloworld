@@ -22,6 +22,7 @@ class Deque:
     def empty(self):
         return len(self) == 0
 
+    # O(1)
     def add_left(self, e):
         if self._count == len(self._data):
             self.resize(len(self._data)*2)
@@ -63,6 +64,7 @@ class Deque:
 
         self._count += 1
 
+    # O(1)
     def pop_right(self):
         if self.empty():
             raise EmptyError
