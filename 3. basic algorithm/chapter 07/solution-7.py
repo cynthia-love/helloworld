@@ -63,7 +63,7 @@ class LinkedList:
 
     def bubble_sort2(self):
 
-        # 试一下纯指针的写法
+        # 试一下纯指针的写法, 当然还是换值不是换结点
 
         finished = None  # 代表最新的一个冒到顶的结点, 即有序的最左位置
 
@@ -134,6 +134,27 @@ class LinkedList:
 
         self._head = head2
 
+    def insertion_sort(self):
+        # 单链表不要直接在原结点上同时操作删除和插入
+        head2 = self._Node()
+
+        while self._head._next:
+
+            node = self._head._next
+
+            self._head._next = node._next  # 从原链中删掉结点
+
+            p = head2
+
+            while p._next and p._next._e < node._e:
+
+                p = p._next
+
+            # 循环退出条件为, p指向刚好大于node值的结点的上一个结点
+            node._next = p._next
+            p._next = node
+
+        self._head = head2
 
 ll = LinkedList()
 ll.add_first(8)
@@ -150,11 +171,14 @@ print(list(ll))
 # ll.bubble_sort2()
 # print(list(ll))
 
-ll.selection_sort1()
-print(list(ll))
+# ll.selection_sort1()
+# print(list(ll))
 
 # ll.selection_sort2()
 # print(list(ll))
+
+ll.insertion_sort()
+print(list(ll))
 
 
 
