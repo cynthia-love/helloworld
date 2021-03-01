@@ -2,13 +2,7 @@
 # Author: Cynthia
 
 """
-    位置链表里的add_first, add_last方法能否去掉
-
-    直接用: add_before(l.first(), e), add_after(l.last(), e)?
-
-    答: 不能, 位置链表仅对元素节点有意义, 头尾结点识别为None
-
-    意味着, 空的情况下, l.first(), l.last()获取到的是None
+    对Position实现max()函数, 返回最大元素
 
 """
 
@@ -18,14 +12,12 @@ class DoubleLinkedList:
 
         __slots__ = 'e', 'prev', 'next'
 
-        def __init__(self, e = None):
-
+        def __init__(self, e=None):
             self.e = e
             self.prev = None
             self.next = None
 
     def __init__(self):
-
         self.head = self.Node()
         self.tail = self.Node()
 
@@ -34,19 +26,18 @@ class DoubleLinkedList:
 
         self.nodes = {self.head, self.tail}
 
+    def __len__(self):
+        return len(self.nodes)-2
+
+    def _empty(self):
+        return len(self) == 0
+
     def _validate(self, node):
 
         if node in self.nodes:
             return True
 
         return False
-
-    def __len__(self):
-
-        return len(self.nodes)-2
-
-    def _empty(self):
-        return len(self) == 0
 
     def _add_after(self, left, e):
 
@@ -75,9 +66,8 @@ class DoubleLinkedList:
         if right is self.head:
             raise KeyError
 
-        node = self.Node(e)
-
         left = right.prev
+        node = self.Node(e)
 
         node.prev, node.next = left, right
         left.next, right.prev = node, node
@@ -95,6 +85,7 @@ class DoubleLinkedList:
             raise KeyError
 
         node.prev.next = node.next
+
         node.next.prev = node.prev
 
         node.prev = node.next = None
@@ -108,7 +99,6 @@ class PositionLinkedList(DoubleLinkedList):
     class Position:
 
         def __init__(self, container, node):
-
             self.container = container
             self.node = node
 
@@ -129,12 +119,18 @@ class PositionLinkedList(DoubleLinkedList):
 
             return True
 
+        # max(l)函数需要元素实现__gt__方法
+        def __gt__(self, other):
+
+            if type(other) is not type(self):
+                raise KeyError
+
+            return self.element > other.element
+
     def empty(self):
         return self._empty()
 
-    # 位置的校验, 头尾为None会校验失败
     def validate(self, p):
-
         if not isinstance(p, self.Position):
             return False
 
@@ -148,15 +144,14 @@ class PositionLinkedList(DoubleLinkedList):
         if not self._validate(node):
             raise KeyError
 
-        # 这里头尾返回None很关键
         if node in [self.head, self.tail]:
             return None
 
         return self.Position(self, node)
 
     # -----accessor-----
-
     def first(self):
+
         return self.n2p(self.head.next)
 
     def last(self):
@@ -165,23 +160,23 @@ class PositionLinkedList(DoubleLinkedList):
     def before(self, p):
 
         if not self.validate(p):
-            raise TypeError
+            raise KeyError
 
         return self.n2p(p.node.prev)
 
     def after(self, p):
 
         if not self.validate(p):
-
-            raise TypeError
+            raise KeyError
 
         return self.n2p(p.node.next)
 
     def __iter__(self):
+        # 返回位置, 而非value
         cursor = self.first()
 
         while cursor:
-            yield cursor.element
+            yield cursor
             cursor = self.after(cursor)
 
     # -----mutator-----
@@ -192,19 +187,19 @@ class PositionLinkedList(DoubleLinkedList):
     def add_last(self, e):
         return self.n2p(self._add_before(self.tail, e))
 
-    def add_before(self, p, e):
+    def add_before(self, right, e):
 
-        if not self.validate(p):
+        if not self.validate(right):
             raise KeyError
 
-        return self.n2p(self._add_before(p.node, e))
+        return self.n2p(self._add_before(right.node, e))
 
-    def add_after(self, p, e):
+    def add_after(self, left, e):
 
-        if not self.validate(p):
+        if not self.validate(left):
             raise KeyError
 
-        return self.n2p(self._add_after(p.node, e))
+        return self.n2p(self._add_after(left.node, e))
 
     def delete(self, p):
 
@@ -219,21 +214,12 @@ class PositionLinkedList(DoubleLinkedList):
 
 
 pll = PositionLinkedList()
-for e in pll: print(e)
-print(pll.empty())
-print(pll.first(), pll.last())
 p1 = pll.add_first(1)
 p2 = pll.add_last(2)
-for e in pll: print(e)
-print(pll.first().element, pll.last().element)
+p3 = pll.add_last(3)
+p4 = pll.add_last(2)
 pll.add_before(p1, 0)
 pll.add_after(p1, 1.5)
-print(list(pll))
-print(pll.before(p2).element)
-print(pll.after(pll.after(p1)).element)
-pll.delete(pll.after(p1))
-print(list(pll))
-print(len(pll))
-print(max(pll))
 
-
+# max要求实现对象的枚举和每个元素的__gt__
+print(max(pll).element)
