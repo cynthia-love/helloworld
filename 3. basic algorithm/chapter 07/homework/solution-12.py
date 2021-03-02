@@ -2,7 +2,7 @@
 # Author: Cynthia
 
 """
-    实现位置列表的L.max()
+    实现PositionLinkedList的L.max()
     (而非max(L))
 
 """

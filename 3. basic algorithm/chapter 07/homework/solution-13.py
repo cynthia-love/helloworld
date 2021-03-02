@@ -2,12 +2,16 @@
 # Author: Cynthia
 
 """
-    对PositionLinkedList实现max()函数, 返回最大元素
-
+    对PositionLinkedList实现find(e), 返回位置, 没找到返回None
 """
 
-class DoubleLinkedList:
+class IllegalNode(Exception):
+    pass
 
+class IllegalPosition(Exception):
+    pass
+
+class DoubleLinkedList:
     class Node:
 
         __slots__ = 'e', 'prev', 'next'
@@ -18,6 +22,7 @@ class DoubleLinkedList:
             self.next = None
 
     def __init__(self):
+
         self.head = self.Node()
         self.tail = self.Node()
 
@@ -27,7 +32,7 @@ class DoubleLinkedList:
         self.nodes = {self.head, self.tail}
 
     def __len__(self):
-        return len(self.nodes)-2
+        return len(self.nodes) - 2
 
     def _empty(self):
         return len(self) == 0
@@ -42,10 +47,10 @@ class DoubleLinkedList:
     def _add_after(self, left, e):
 
         if not self._validate(left):
-            raise KeyError
+            raise IllegalNode
 
         if left is self.tail:
-            raise KeyError
+            raise IllegalNode
 
         node = self.Node(e)
 
@@ -61,15 +66,16 @@ class DoubleLinkedList:
     def _add_before(self, right, e):
 
         if not self._validate(right):
-            raise KeyError
+            raise IllegalNode
 
         if right is self.head:
-            raise KeyError
+            raise IllegalNode
 
-        left = right.prev
         node = self.Node(e)
+        left = right.prev
 
         node.prev, node.next = left, right
+
         left.next, right.prev = node, node
 
         self.nodes.add(node)
@@ -79,13 +85,12 @@ class DoubleLinkedList:
     def _delete(self, node):
 
         if not self._validate(node):
-            raise KeyError
+            raise IllegalNode
 
         if node in [self.head, self.tail]:
-            raise KeyError
+            raise IllegalNode
 
         node.prev.next = node.next
-
         node.next.prev = node.prev
 
         node.prev = node.next = None
@@ -93,6 +98,7 @@ class DoubleLinkedList:
         self.nodes.remove(node)
 
         return node.e
+
 
 class PositionLinkedList(DoubleLinkedList):
 
@@ -107,25 +113,12 @@ class PositionLinkedList(DoubleLinkedList):
             return self.node.e
 
         def __eq__(self, other):
+            if type(other) is type(self) \
+                    and other.container is self.container \
+                    and other.node is self.node:
+                return True
 
-            if type(other) is not type(self):
-                return False
-
-            if other.container is not self.container:
-                return False
-
-            if other.node is not self.node:
-                return False
-
-            return True
-
-        # max(l)函数需要元素实现__gt__方法
-        def __gt__(self, other):
-
-            if type(other) is not type(self):
-                raise KeyError
-
-            return self.element > other.element
+            return False
 
     def empty(self):
         return self._empty()
@@ -133,25 +126,23 @@ class PositionLinkedList(DoubleLinkedList):
     def validate(self, p):
         if not isinstance(p, self.Position):
             return False
-
         if p.container is not self:
             return False
-
         return True
 
     def n2p(self, node):
 
         if not self._validate(node):
-            raise KeyError
+            raise IllegalNode
 
         if node in [self.head, self.tail]:
             return None
 
         return self.Position(self, node)
 
-    # -----accessor-----
-    def first(self):
+    # ---accessor---
 
+    def first(self):
         return self.n2p(self.head.next)
 
     def last(self):
@@ -160,28 +151,36 @@ class PositionLinkedList(DoubleLinkedList):
     def before(self, p):
 
         if not self.validate(p):
-            raise KeyError
+            raise IllegalPosition
 
         return self.n2p(p.node.prev)
 
     def after(self, p):
-
         if not self.validate(p):
-            raise KeyError
+            raise IllegalPosition
 
         return self.n2p(p.node.next)
 
     def __iter__(self):
-        # 返回位置, 而非value
         cursor = self.first()
 
         while cursor:
-            yield cursor
+            yield cursor.element
             cursor = self.after(cursor)
 
-    # -----mutator-----
-    def add_first(self, e):
+    def find(self, e):
 
+        cursor = self.first()
+
+        while cursor:
+            if cursor.element == e:
+                return cursor
+            cursor = self.after(cursor)
+
+        return None
+
+    # ---mutator---
+    def add_first(self, e):
         return self.n2p(self._add_after(self.head, e))
 
     def add_last(self, e):
@@ -190,21 +189,21 @@ class PositionLinkedList(DoubleLinkedList):
     def add_before(self, right, e):
 
         if not self.validate(right):
-            raise KeyError
+            raise IllegalPosition
 
         return self.n2p(self._add_before(right.node, e))
 
     def add_after(self, left, e):
 
         if not self.validate(left):
-            raise KeyError
+            raise IllegalPosition
 
         return self.n2p(self._add_after(left.node, e))
 
     def delete(self, p):
 
         if not self.validate(p):
-            raise KeyError
+            raise IllegalPosition
 
         r = self._delete(p.node)
 
@@ -220,6 +219,7 @@ p3 = pll.add_last(3)
 p4 = pll.add_last(2)
 pll.add_before(p1, 0)
 pll.add_after(p1, 1.5)
-
-# max要求实现对象的枚举和每个元素的__gt__
-print(max(pll).element)
+print(list(pll))
+# print(pll.delete(p1))
+print(pll.find(2).element)
+print(pll.find(8))
