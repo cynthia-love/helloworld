@@ -325,7 +325,7 @@ print(list(fl.top(3)))
     
 """
 
-class FavoritestListMTF(FavoritesList):
+class FavoritesListMTF(FavoritesList):
 
     def _move(self, p):
         if p != self._data.first():
@@ -359,7 +359,7 @@ class FavoritestListMTF(FavoritesList):
             t.delete(highest)
 
 
-fl = FavoritestListMTF()
+fl = FavoritesListMTF()
 fl.access('a')
 fl.access('a')
 fl.access('b')
