@@ -2,10 +2,22 @@
 # Author: Cynthia
 
 """
-    之前的FavoritesListMTF移动元素是先把节点删了, 再根据其值进行新节点插入
-    增加方法, 使得原节点直接移动到头部
-
-    (不要去修改原有的delete, delete_node方法, 正常的删除还是要清理的)
+    收藏夹初始为{a, b, c, d, e, f}
+    根据{a, b, c, d, e, f, a, c, f, b, d, e}的顺序使用Move-to-Front启发式操作方法
+    给出最终链表中元素的状态
+    abcdef
+    abcdef
+    bacdef
+    cbadef
+    dcbaef
+    edcbaf
+    fedcba
+    afedcb
+    cafedb
+    fcaedb
+    bfcaed
+    dbfcae
+    edbfca
 
 """
 
@@ -22,10 +34,8 @@ class DoubleLinkedList:
         __slots__ = 'e', 'prev', 'next'
 
         def __init__(self, e=None):
-
             self.e = e
             self.prev = None
-
             self.next = None
 
     def __init__(self):
@@ -38,14 +48,17 @@ class DoubleLinkedList:
         self.nodes = {self.head, self.tail}
 
     def __len__(self):
+
         return len(self.nodes)-2
 
     def empty(self):
         return len(self) == 0
 
     def _validate(self, node):
+
         if node not in self.nodes:
             return False
+
         return True
 
     def _add_before(self, right, e):
@@ -64,6 +77,7 @@ class DoubleLinkedList:
         left.next, right.prev = node, node
 
         self.nodes.add(node)
+
         return node
 
     def _add_after(self, left, e):
@@ -86,6 +100,7 @@ class DoubleLinkedList:
         return node
 
     def _delete(self, node):
+
         if not self._validate(node):
             raise IllegalNode
 
@@ -102,6 +117,7 @@ class DoubleLinkedList:
         return node.e
 
     def _move_first(self, node):
+
         if not self._validate(node):
             raise IllegalNode
 
@@ -123,6 +139,7 @@ class PositionLinkedList(DoubleLinkedList):
     class Position:
 
         def __init__(self, container, node):
+
             self.container = container
             self.node = node
 
@@ -131,10 +148,11 @@ class PositionLinkedList(DoubleLinkedList):
             return self.node.e
 
         def __eq__(self, other):
+
             if type(other) is not type(self):
                 raise IllegalPosition
 
-            if other.container is not self.container:
+            if other.container is not self:
                 return False
 
             if other.node is not self.node:
@@ -153,6 +171,7 @@ class PositionLinkedList(DoubleLinkedList):
         return True
 
     def n2p(self, node):
+
         if not self._validate(node):
             raise IllegalNode
 
@@ -169,12 +188,14 @@ class PositionLinkedList(DoubleLinkedList):
         return self.n2p(self.tail.prev)
 
     def before(self, p):
+
         if not self.validate(p):
             raise IllegalPosition
 
         return self.n2p(p.node.prev)
 
     def after(self, p):
+
         if not self.validate(p):
             raise IllegalPosition
 
@@ -184,15 +205,19 @@ class PositionLinkedList(DoubleLinkedList):
         cursor = self.first()
 
         while cursor:
+
+            # cursor.node.e
             yield cursor.element
 
             cursor = self.after(cursor)
 
     # ===mutator===
     def add_first(self, e):
+
         return self.n2p(self._add_after(self.head, e))
 
     def add_last(self, e):
+
         return self.n2p(self._add_before(self.tail, e))
 
     def add_before(self, p, e):
@@ -210,6 +235,7 @@ class PositionLinkedList(DoubleLinkedList):
         return self.n2p(self._add_after(p.node, e))
 
     def delete(self, p):
+
         if not self.validate(p):
             raise IllegalPosition
 
@@ -232,7 +258,8 @@ class FavoritesList:
 
         __slots__ = 'value', 'count'
 
-        def __init__(self, value, count=0):
+        def __init__(self, value, count=1):
+
             self.value = value
             self.count = count
 
@@ -251,101 +278,106 @@ class FavoritesList:
 
             yield each.value, each.count
 
-    # 返回位置
+    # 定位元素
     def find(self, value):
 
         cursor = self.data.first()
 
         while cursor:
             if cursor.element.value is value:
+
                 return cursor
 
             cursor = self.data.after(cursor)
 
         return None
 
+    # 非启发式方法, 按方位次数排序
     def move(self, p):
 
         q = self.data.before(p)
 
-        while q and q.element.count <= p.element.count:
+        while q and q.element.count <= p.element:
             q = self.data.before(q)
 
         if not q:
             self.data.add_first(self.data.delete(p))
-
         else:
             self.data.add_after(q, self.data.delete(p))
 
-    def access(self, v):
+    def access(self, value):
 
-        p = self.find(v)
+        p = self.find(value)
 
         if p:
             p.element.count += 1
 
         else:
-            p = self.data.add_last(self.ElementType(v, 1))
+            p = self.data.add_last(self.ElementType(value))
 
         self.move(p)
 
-    def remove(self, v):
+    def remove(self, value):
 
-        p = self.find(v)
+        p = self.find(value)
 
         if p:
             self.data.delete(p)
 
     def top(self, k):
+
         if not 1 <= k <= len(self):
             raise IndexError
 
         cursor = self.data.first()
 
-        for i in range(k):
+        for _ in range(k):
             yield cursor.element.value, cursor.element.count
 
             cursor = self.data.after(cursor)
 
+
 class FavoritesListMTF(FavoritesList):
 
+    # 启发式收藏夹, 重写move和top两个方法
     def move(self, p):
 
-        # self.data.add_first(self.data.delete(p))
         self.data.move_first(p)
 
     def top(self, k):
+
         if not 1 <= k <= len(self):
             raise IndexError
 
         t = PositionLinkedList()
 
         for item in self.data:
+            # item是节点的值, node.e
+            # 这里是生成新的链表而非直接操作原结点
             t.add_last(item)
 
-        for i in range(k):
+        for _ in range(k):
+
             cursor = highest = t.first()
 
             while cursor:
+
                 if cursor.element.count > highest.element.count:
                     highest = cursor
 
                 cursor = t.after(cursor)
 
-            yield highest.element.value
+            yield highest.element.value, highest.element.count
 
             t.delete(highest)
 
 fl = FavoritesListMTF()
-fl.access('a')
-fl.access('a')
-fl.access('b')
-fl.access('b')
-fl.access('a')
-fl.access('c')
-fl.access('d')
-fl.access('d')
-fl.access('d')
-fl.access('c')
+
+l1 = ['a', 'b', 'c', 'd', 'e', 'f']
+for e in reversed(l1): fl.access(e)
 print(list(fl))
-print(list(fl.top(3)))
+
+l2 = ['a', 'b', 'c', 'd', 'e', 'f', 'a', 'c', 'f', 'b', 'd', 'e']
+for e in l2: fl.access(e)
+
+print(list(fl))
