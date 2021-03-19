@@ -35,6 +35,8 @@ class LinkedList:
         if not self.next:
             self.next = LinkedList(e)
         else:
+            # 有下一个结点, 调下一个结点的append
+            # 直到找到尾结点
             self.next.append(e)
 
     # 一次性构建
