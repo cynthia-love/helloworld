@@ -7,12 +7,12 @@ import requests
 from requests.cookies import RequestsCookieJar
 
 cookie_jar = RequestsCookieJar()
-cookie_jar.set("YII_CSRF_TOKEN", "xxxxx", domain="elearning.bankcomm.com")
-cookie_jar.set("regenerateSessionID", "xxxxx", domain="elearning.bankcomm.com")
-cookie_jar.set("snspSessId", "xxxxx", domain="elearning.bankcomm.com")
-cookie_jar.set("snspUserId", "xxxxx", domain="elearning.bankcomm.com")
+cookie_jar.set("AAA", "xxxxx", domain="xxx.bankcomm.com")
+cookie_jar.set("BBB", "xxxxx", domain="xxx.bankcomm.com")
+cookie_jar.set("CCC", "xxxxx", domain="xxx.bankcomm.com")
+cookie_jar.set("DDD", "xxxxx", domain="xxx.bankcomm.com")
 
-url = "http://elearning.bankcomm.com/?r=course/course/view&id={id}"
+url = "http://xxx.bankcomm.com/?r=course/course/view&id={id}"
 
 with open("result.txt", "a") as fout:
     for i in range(300000, 400000, 1):

@@ -36,7 +36,7 @@ def main():
     print("文件h5_api_all.xlsx可供imms的-verbose参数读入, 文件h5_api_imms.xlsx供imms的-s参数读入")
     print("**********************************************************************************************************")
 
-    ftp_ip = "182.207.129.50"
+    ftp_ip = "xxx.xxx.xxx.xxx"
     ftp_port = 2001
     file_xlsx = "h5_api_all.xlsx"
     file_part = "h5_api_part.xlsx"

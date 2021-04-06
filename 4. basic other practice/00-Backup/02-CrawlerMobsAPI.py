@@ -119,7 +119,7 @@ def main():
         params = {
             "REQ_HEAD": {"TRAN_PROCESS": "", "TRAN_ID": ""},
             "REQ_BODY": {
-                "branchCode": "01315999999",
+                "branchCode": "xxx",
                 "loginName": login_name,
                 "userAuthSession": userAuthSession,
                 "pageSize": "8",
